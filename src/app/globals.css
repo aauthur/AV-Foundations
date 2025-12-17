@@ -1,0 +1,122 @@
+:root {
+  --bg: #0b0f19;
+  --panel: rgba(255,255,255,0.06);
+  --panel2: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.12);
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.70);
+  --muted2: rgba(255,255,255,0.55);
+  --accent: #7c3aed; /* purple */
+  --accent2: #22c55e; /* green */
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(900px 500px at 10% -10%, rgba(124,58,237,0.30), transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, rgba(34,197,94,0.18), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base links */
+a { color: inherit; }
+a:hover { opacity: 0.95; }
+
+/* Reusable container (optional) */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* Nav link styling (replaces onMouseEnter/onMouseLeave) */
+.navlink {
+  text-decoration: none;
+  opacity: 0.85;
+  padding: 0.35rem 0.6rem;
+  border-radius: 10px;
+  transition: background 150ms ease, opacity 150ms ease, border-color 150ms ease;
+  border: 1px solid transparent;
+}
+
+.navlink:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.10);
+  opacity: 1;
+}
+
+.brand {
+  text-decoration: none;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+/* “Card” utility if you want it */
+.card {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+/* ---------- MDX / notes typography ---------- */
+/* Wrap MDX content in <article className="prose"> ... */
+.prose {
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.prose p {
+  margin: 0.9rem 0;
+  color: var(--muted);
+}
+
+.prose h1, .prose h2, .prose h3 {
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin: 1.6rem 0 0.75rem;
+}
+
+.prose h1 { font-size: 2rem; }
+.prose h2 { font-size: 1.35rem; }
+.prose h3 { font-size: 1.1rem; }
+
+.prose ul, .prose ol {
+  margin: 0.75rem 0 0.75rem 1.25rem;
+  color: var(--muted);
+}
+
+.prose li { margin: 0.35rem 0; }
+
+.prose code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.95em;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 0.15rem 0.35rem;
+  border-radius: 8px;
+}
+
+.prose pre {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.prose blockquote {
+  margin: 1rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 3px solid rgba(124,58,237,0.6);
+  color: var(--muted);
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+}

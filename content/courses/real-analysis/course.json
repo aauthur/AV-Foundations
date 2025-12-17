@@ -1,0 +1,8 @@
+{
+  "slug": "real-analysis",
+  "title": "Real Analysis",
+  "description": "Limits, continuity, and rigorous foundations.",
+  "lessons": [
+    { "slug": "01-limits", "title": "Limits (epsilon–delta)", "youtubeId": "912OAHYdgww" }
+  ]
+}
