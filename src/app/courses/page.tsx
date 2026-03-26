@@ -28,17 +28,7 @@ export default async function CoursesPage() {
             >
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "1rem" }}>
                 <h2 style={{ margin: 0, fontSize: "1.25rem" }}>{c.title}</h2>
-                <span
-                  style={{
-                    fontSize: "0.8rem",
-                    opacity: 0.65,
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    padding: "0.2rem 0.5rem",
-                    borderRadius: 999,
-                    background: "rgba(255,255,255,0.04)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
+                <span className="pill">
                   {c.lessons?.length ?? 0} lesson{(c.lessons?.length ?? 0) === 1 ? "" : "s"}
                 </span>
               </div>
@@ -54,17 +44,7 @@ export default async function CoursesPage() {
               )}
 
               <div style={{ marginTop: "1.1rem" }}>
-                <a
-                  href={`/courses/${c.slug}`}
-                  style={{
-                    display: "inline-block",
-                    textDecoration: "none",
-                    padding: "0.65rem 0.9rem",
-                    borderRadius: 12,
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    background: "rgba(255,255,255,0.06)",
-                  }}
-                >
+                <a href={`/courses/${c.slug}`} className="btn btnPrimary">
                   View course →
                 </a>
               </div>

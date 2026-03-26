@@ -1,13 +1,14 @@
 .page {
-  --background: #fafafa;
-  --foreground: #fff;
+  /* Re-theme to match globals.css palette */
+  --background: #35608a;
+  --foreground: rgba(14, 22, 45, 0.22);
 
-  --text-primary: #000;
-  --text-secondary: #666;
+  --text-primary: #fffdf7;
+  --text-secondary: rgba(255, 253, 247, 0.82);
 
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --button-secondary-border: #ebebeb;
+  --button-primary-hover: rgba(232, 221, 177, 0.92);
+  --button-secondary-hover: rgba(255, 248, 231, 0.10);
+  --button-secondary-border: rgba(255, 248, 231, 0.35);
 
   display: flex;
   min-height: 100vh;
@@ -84,13 +85,16 @@
 }
 
 a.primary {
-  background: var(--text-primary);
-  color: var(--background);
+  background: #e8ddb1;
+  color: #8e5b3d;
+  border: 2px solid #b87955;
   gap: 8px;
 }
 
 a.secondary {
   border-color: var(--button-secondary-border);
+  background: rgba(232, 221, 177, 0.10);
+  color: var(--text-primary);
 }
 
 /* Enable hover only on non-touch devices */
@@ -123,19 +127,16 @@ a.secondary {
 }
 
 @media (prefers-color-scheme: dark) {
-  .logo {
-    filter: invert();
-  }
-
+  /* Keep dark-mode block but align with same theme (site is already dark/blue) */
   .page {
-    --background: #000;
-    --foreground: #000;
+    --background: #35608a;
+    --foreground: rgba(14, 22, 45, 0.22);
 
-    --text-primary: #ededed;
-    --text-secondary: #999;
+    --text-primary: #fffdf7;
+    --text-secondary: rgba(255, 253, 247, 0.72);
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --button-secondary-border: #1a1a1a;
+    --button-primary-hover: rgba(232, 221, 177, 0.92);
+    --button-secondary-hover: rgba(255, 248, 231, 0.10);
+    --button-secondary-border: rgba(255, 248, 231, 0.35);
   }
 }

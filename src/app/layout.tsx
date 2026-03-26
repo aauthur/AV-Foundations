@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
+import AuthButton from "@/app/components/AuthButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AV Foundations",
+  title: "Open Math Academy",
   description: "Rigorous, proof-first math courses — free and open source.",
 };
 
@@ -34,16 +35,7 @@ export default function RootLayout({
         }}
       >
         {/* Top navigation */}
-        <header
-          style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 50,
-            backdropFilter: "blur(12px)",
-            background: "rgba(11, 15, 25, 0.75)",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
+        <header className="siteHeader">
           <nav
             className="container"
             style={{
@@ -54,30 +46,26 @@ export default function RootLayout({
             }}
           >
             <a href="/" className="brand">
-              AV Foundations
+              Open Math Academy
             </a>
 
             <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
               <NavLink href="/courses">Courses</NavLink>
+              <NavLink href="/community">Community</NavLink>
+              <NavLink href="/messages">Messages</NavLink>
               <NavLink href="https://www.youtube.com/@ProvenMath" external>
                 YouTube
               </NavLink>
+              <AuthButton />
             </div>
           </nav>
         </header>
 
         {/* Main content */}
-        <main style={{ flex: 1 }}>
-          {children}
-        </main>
+        <main style={{ flex: 1 }}>{children}</main>
 
         {/* Footer */}
-        <footer
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.08)",
-            marginTop: "3rem",
-          }}
-        >
+        <footer className="siteFooter">
           <div
             className="container"
             style={{
@@ -88,10 +76,8 @@ export default function RootLayout({
               opacity: 0.7,
             }}
           >
-            <small>© {new Date().getFullYear()} AV Foundations</small>
-            <small>
-              Free, open-source math education. Built with Next.js + MDX.
-            </small>
+            <small>© {new Date().getFullYear()} Open Math Academy</small>
+            <small>Free, open-source math education.</small>
           </div>
         </footer>
       </body>

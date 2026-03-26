@@ -1,10 +1,13 @@
 import { promises as fs } from "fs";
 import path from "path";
 
+export type LessonType = "lesson" | "quiz" | "exam";
+
 export type LessonMeta = {
   slug: string;
   title: string;
   youtubeId?: string;
+  type?: LessonType; // default to "lesson" where missing
 };
 
 export type Course = {

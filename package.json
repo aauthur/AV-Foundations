@@ -3,17 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run sync-content && next dev",
+    "build": "npm run sync-content && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync-content": "node src/scripts/sync-content.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.9.0",
+    "@supabase/supabase-js": "^2.100.0",
     "katex": "^0.16.27",
-    "next": "16.0.10",
-    "next-mdx-remote": "^5.0.0",
+    "next": "^16.1.7",
+    "next-mdx-remote": "^6.0.0",
+    "openai": "^6.32.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "react-markdown": "^10.1.0",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0"
@@ -22,8 +27,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "baseline-browser-mapping": "^2.10.8",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "typescript": "^5"
   }
 }
+
