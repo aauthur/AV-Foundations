@@ -54,10 +54,6 @@ export default function ReplyForm({ threadId, parentId }: Props) {
           required
           theme="paper"
         />
-
-        <div className="editorHint">
-          Type \ for LaTeX suggestions. Use Tab or Enter to accept a suggestion.
-        </div>
       </div>
 
       {error ? <div className="errorText">{error}</div> : null}
