@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import MathEditor from "./MathEditor";
 
 type Props = {
   commentId: number;
@@ -41,7 +42,7 @@ export default function CommentActions({ commentId, body }: Props) {
   }
 
   async function handleDelete() {
-    const ok = window.confirm("Delete this reply?");
+    const ok = window.confirm("Delete this comment?");
     if (!ok) return;
 
     setError(null);
@@ -68,20 +69,30 @@ export default function CommentActions({ commentId, body }: Props) {
 
   if (editing) {
     return (
-      <div className="stack" style={{ marginTop: "0.85rem" }}>
-        <textarea
-          className="field"
-          rows={5}
+      <div className="stack" style={{ marginTop: "0.95rem" }}>
+        <MathEditor
+          name={`comment-edit-${commentId}`}
           value={bodyValue}
-          onChange={(e) => setBodyValue(e.target.value)}
+          onChange={setBodyValue}
+          minHeight={150}
+          placeholderText="Edit your comment..."
+          required
         />
+
         {error ? <div className="errorText">{error}</div> : null}
-        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <button className="btn btnPrimary" disabled={pending} onClick={submitEdit}>
+
+        <div style={{ display: "flex", gap: "0.7rem", flexWrap: "wrap" }}>
+          <button
+            className="btn btnPrimary"
+            type="button"
+            disabled={pending}
+            onClick={submitEdit}
+          >
             {pending ? "Saving..." : "Save"}
           </button>
+
           <button
-            className="btn"
+            className="btn btnGhost"
             type="button"
             onClick={() => {
               setEditing(false);
@@ -97,13 +108,20 @@ export default function CommentActions({ commentId, body }: Props) {
   }
 
   return (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "0.85rem" }}>
-      <button className="btn" type="button" onClick={() => setEditing(true)}>
+    <div className="forumMinorActions">
+      <button className="btn btnGhost" type="button" onClick={() => setEditing(true)}>
         Edit
       </button>
-      <button className="btn" type="button" onClick={handleDelete} disabled={pending}>
+
+      <button
+        className="btn btnGhost"
+        type="button"
+        onClick={handleDelete}
+        disabled={pending}
+      >
         Delete
       </button>
+
       {error ? <div className="errorText">{error}</div> : null}
     </div>
   );

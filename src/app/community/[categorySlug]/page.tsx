@@ -15,92 +15,121 @@ export default async function CategoryPage({ params }: Props) {
   }
 
   return (
-    <main className="container" style={{ padding: "3rem 1rem 4rem", maxWidth: 980 }}>
-      <Link href="/community" className="linkMuted">
-        ← Back to community
-      </Link>
+    <div className="threadPage">
+      <main className="container manilaPageMain">
+        <Link
+          href="/community"
+          className="linkMuted"
+          style={{ marginTop: "1rem", display: "inline-block" }}
+        >
+          ← Back to community
+        </Link>
 
-      <section className="pageHero" style={{ marginTop: "1rem" }}>
-        <span className="pill">{category.name}</span>
-        <h1 className="pageTitle" style={{ fontSize: "clamp(1.9rem, 3vw, 2.6rem)" }}>
-          {category.name}
-        </h1>
-        <p className="pageSubtitle">{category.description}</p>
-      </section>
-
-      <div className="toolbar" style={{ marginBottom: "1.5rem" }}>
-        <div className="metaRow">
+        <section className="pageHero" style={{ marginTop: "1rem", marginBottom: "1.8rem" }}>
           <span
             className="pill"
             style={{
-              background:
-                "linear-gradient(180deg, rgba(245,238,210,0.98), rgba(232,221,177,0.92))",
-              borderColor: "rgba(184,121,85,0.28)",
+              background: "rgba(184,121,85,0.08)",
+              borderColor: "rgba(184,121,85,0.18)",
               color: "#6a5239",
             }}
           >
-            {threads.length} thread{threads.length === 1 ? "" : "s"}
+            {category.name}
           </span>
+
+          <h1 className="threadTitle" style={{ marginTop: "0.2rem" }}>
+            {category.name}
+          </h1>
+
+          <p className="pageSubtitle" style={{ color: "#6a5239" }}>
+            {category.description}
+          </p>
+        </section>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "1rem",
+            marginBottom: "1.25rem",
+          }}
+        >
+          <div style={{ color: "#6a5239", fontSize: "0.95rem" }}>
+            {threads.length} thread{threads.length === 1 ? "" : "s"}
+          </div>
+
+          <Link href={`/community/${category.slug}/new`} className="btn btnPrimary">
+            New thread
+          </Link>
         </div>
 
-        <Link href={`/community/${category.slug}/new`} className="btn btnPrimary">
-          New thread
-        </Link>
-      </div>
-
-      <div className="stackLg">
         {threads.length === 0 ? (
-          <div className="paperCard" style={{ padding: "1.25rem 1.3rem" }}>
-            <h2 style={{ margin: 0, fontSize: "1.08rem" }}>No threads yet</h2>
-            <p style={{ margin: "0.5rem 0 0 0", color: "#6a5239", lineHeight: 1.6 }}>
-              Be the first to start a discussion in this category.
-            </p>
-          </div>
+          <p style={{ margin: 0, color: "#6a5239" }}>
+            No threads yet. Be the first to start a discussion in this category.
+          </p>
         ) : (
-          threads.map((thread) => (
-            <Link
-              key={thread.id}
-              href={`/community/thread/${thread.id}`}
-              className="paperLinkCard"
-            >
-              <div className="toolbar" style={{ alignItems: "flex-start" }}>
-                <div style={{ minWidth: 0 }}>
-                  <h2
+          <div className="communityList">
+            {threads.map((thread) => (
+              <div key={thread.id} className="communityRow">
+                <Link href={`/community/thread/${thread.id}`} className="paperLinkCard">
+                  <div
                     style={{
-                      margin: 0,
-                      fontSize: "1.16rem",
-                      letterSpacing: "-0.02em",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      gap: "1rem",
                     }}
                   >
-                    {thread.title}
-                  </h2>
+                    <div style={{ minWidth: 0 }}>
+                      <h2
+                        style={{
+                          margin: 0,
+                          fontSize: "1.08rem",
+                          letterSpacing: "-0.02em",
+                          color: "#3b2c1b",
+                        }}
+                      >
+                        {thread.title}
+                      </h2>
 
-                  <div className="metaRow" style={{ marginTop: "0.65rem" }}>
-                    <span>
-                      by {thread.author?.display_name || thread.author?.username || "Unknown"}
-                    </span>
-                    <span>•</span>
-                    <span>
-                      {thread.reply_count} repl{thread.reply_count === 1 ? "y" : "ies"}
+                      <div
+                        className="metaRow"
+                        style={{
+                          marginTop: "0.45rem",
+                          gap: "0.5rem",
+                          color: "#6a5239",
+                          fontSize: "0.93rem",
+                        }}
+                      >
+                        <span>
+                          by {thread.author?.display_name || thread.author?.username || "Unknown"}
+                        </span>
+                        <span>•</span>
+                        <span>
+                          {thread.reply_count} repl{thread.reply_count === 1 ? "y" : "ies"}
+                        </span>
+                      </div>
+                    </div>
+
+                    <span
+                      style={{
+                        color: "#8e5b3d",
+                        fontSize: "0.95rem",
+                        whiteSpace: "nowrap",
+                        flexShrink: 0,
+                        paddingTop: "0.1rem",
+                      }}
+                    >
+                      Open →
                     </span>
                   </div>
-                </div>
-
-                <span
-                  className="pill"
-                  style={{
-                    background: "rgba(184,121,85,0.10)",
-                    borderColor: "rgba(184,121,85,0.22)",
-                    color: "#6a5239",
-                  }}
-                >
-                  Open
-                </span>
+                </Link>
               </div>
-            </Link>
-          ))
+            ))}
+          </div>
         )}
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

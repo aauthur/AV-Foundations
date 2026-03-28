@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import MathEditor from "./MathEditor";
 
 type Props = {
   threadId: number;
@@ -35,19 +36,29 @@ export default function ReplyForm({ threadId, parentId }: Props) {
   }
 
   return (
-    <form action={handleSubmit} className="stack">
+    <form action={handleSubmit} className="editorCard stack">
       <input type="hidden" name="thread_id" value={threadId} />
       <input type="hidden" name="parent_id" value={parentId ?? ""} />
 
-      <textarea
-        className="field"
-        name="body"
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        rows={parentId ? 4 : 5}
-        placeholder={parentId ? "Write a reply..." : "Join the discussion..."}
-        required
-      />
+      <div className="stackSm">
+        <label className="editorLabel" htmlFor="body" style={{ marginTop: "0rem", display: "inline-block" }}>
+          {parentId ? "Reply" : "Reply to thread"}
+        </label>
+
+        <MathEditor
+          name="body"
+          value={body}
+          onChange={setBody}
+          minHeight={parentId ? 130 : 150}
+          placeholderText={parentId ? "Write a reply..." : "Join the discussion..."}
+          required
+          theme="paper"
+        />
+
+        <div className="editorHint">
+          Type \ for LaTeX suggestions. Use Tab or Enter to accept a suggestion.
+        </div>
+      </div>
 
       {error ? <div className="errorText">{error}</div> : null}
 

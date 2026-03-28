@@ -239,7 +239,7 @@ export default function LoginPage() {
               color: "#8b6b3f",
             }}
           >
-            Authur Academy
+            Open Math Academy
           </p>
 
           <h1
@@ -276,12 +276,12 @@ export default function LoginPage() {
                 fontSize: "0.95rem",
               }}
             >
-              Email
+              {isSignup ? "Email" : "Email or Username"}
             </label>
             <input
               id="identifier"
               type={isSignup ? "email" : "text"}
-              placeholder={isSignup ? "you@example.com" : "you@example.com"}
+              placeholder={isSignup ? "you@example.com" : "Enter your username or email"}
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required

@@ -7,9 +7,17 @@ type Props = {
   source: string;
 };
 
+function normalizeLatexDelimiters(input: string): string {
+  return input
+    .replace(/\\\[((?:.|\n|\r)*?)\\\]/g, (_match, inner) => `$$\n${inner.trim()}\n$$`)
+    .replace(/\\\(((?:.|\n|\r)*?)\\\)/g, (_match, inner) => `$${inner}$`);
+}
+
 export default async function RichText({ source }: Props) {
+  const normalizedSource = normalizeLatexDelimiters(source);
+
   const { content } = await compileMDX({
-    source,
+    source: normalizedSource,
     options: {
       mdxOptions: {
         remarkPlugins: [remarkGfm, remarkMath],
@@ -17,9 +25,15 @@ export default async function RichText({ source }: Props) {
       },
     },
     components: {
-      p: (props) => (<p style={{ margin: "0 0 0.75rem 0", lineHeight: 1.7 }} {...props} />),
-      ul: (props) => <ul style={{ lineHeight: 1.7, paddingLeft: "1.4rem" }} {...props} />,
-      ol: (props) => <ol style={{ lineHeight: 1.7, paddingLeft: "1.4rem" }} {...props} />,
+      p: (props) => (
+        <p style={{ margin: "0 0 0.75rem 0", lineHeight: 1.7 }} {...props} />
+      ),
+      ul: (props) => (
+        <ul style={{ lineHeight: 1.7, paddingLeft: "1.4rem" }} {...props} />
+      ),
+      ol: (props) => (
+        <ol style={{ lineHeight: 1.7, paddingLeft: "1.4rem" }} {...props} />
+      ),
       code: (props) => (
         <code
           style={{
@@ -45,5 +59,5 @@ export default async function RichText({ source }: Props) {
     },
   });
 
-   return <div className="richText">{content}</div>;
+  return <div className="richText">{content}</div>;
 }

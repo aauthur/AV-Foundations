@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import MathEditor from "./MathEditor";
 
 type Props = {
   threadId: number;
@@ -10,7 +11,12 @@ type Props = {
   categorySlug: string;
 };
 
-export default function ThreadActions({ threadId, title, body, categorySlug }: Props) {
+export default function ThreadActions({
+  threadId,
+  title,
+  body,
+  categorySlug,
+}: Props) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [titleValue, setTitleValue] = useState(title);
@@ -74,24 +80,39 @@ export default function ThreadActions({ threadId, title, body, categorySlug }: P
   if (editing) {
     return (
       <div className="sectionCard stack" style={{ marginTop: "1rem" }}>
-        <input
-          className="field"
-          value={titleValue}
-          onChange={(e) => setTitleValue(e.target.value)}
-        />
-        <textarea
-          className="field"
-          rows={8}
-          value={bodyValue}
-          onChange={(e) => setBodyValue(e.target.value)}
-        />
+        <div>
+          <label htmlFor={`thread-title-${threadId}`} className="formLabel">
+            Title
+          </label>
+          <input
+            id={`thread-title-${threadId}`}
+            className="field"
+            value={titleValue}
+            onChange={(e) => setTitleValue(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="formLabel">Body</label>
+          <MathEditor
+            name={`thread-edit-${threadId}`}
+            value={bodyValue}
+            onChange={setBodyValue}
+            minHeight={220}
+            placeholderText="Edit your thread..."
+            required
+          />
+        </div>
+
         {error ? <div className="errorText">{error}</div> : null}
-        <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+
+        <div style={{ display: "flex", gap: "0.7rem", flexWrap: "wrap" }}>
           <button className="btn btnPrimary" disabled={pending} onClick={submitEdit}>
             {pending ? "Saving..." : "Save"}
           </button>
+
           <button
-            className="btn"
+            className="btn btnGhost"
             type="button"
             onClick={() => {
               setEditing(false);
@@ -102,19 +123,30 @@ export default function ThreadActions({ threadId, title, body, categorySlug }: P
           >
             Cancel
           </button>
+
+          <button
+            className="btn btnGhost"
+            type="button"
+            onClick={handleDelete}
+            disabled={pending}
+          >
+            Delete thread
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
-      <button className="btn" type="button" onClick={() => setEditing(true)}>
+    <div className="threadMinorActions">
+      <button className="btn btnGhost" type="button" onClick={() => setEditing(true)}>
         Edit thread
       </button>
-      <button className="btn" type="button" onClick={handleDelete} disabled={pending}>
+
+      <button className="btn btnGhost" type="button" onClick={handleDelete} disabled={pending}>
         Delete thread
       </button>
+
       {error ? <div className="errorText">{error}</div> : null}
     </div>
   );

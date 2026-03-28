@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import MathEditor from "@/components/forum/MathEditor";
 
 type Props = {
   threadId: number;
@@ -38,13 +39,12 @@ export default function MessageComposer({ threadId }: Props) {
     <form action={handleSubmit} className="stack">
       <input type="hidden" name="thread_id" value={threadId} />
 
-      <textarea
-        className="field"
+      <MathEditor
         name="body"
         value={body}
-        onChange={(e) => setBody(e.target.value)}
-        rows={4}
-        placeholder="Write a message..."
+        onChange={setBody}
+        minHeight={140}
+        placeholderText="Write a message..."
         required
       />
 

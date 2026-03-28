@@ -9,12 +9,22 @@ export type MessageProfile = {
 
 type RawThreadParticipant = {
   user_id: string;
-  profile: MessageProfile[] | null;
+  profile: MessageProfile | MessageProfile[] | null;
 };
 
 export type ThreadParticipant = {
   user_id: string;
   profile: MessageProfile | null;
+};
+
+type RawThreadMessage = {
+  id: number;
+  thread_id: number;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  read_at: string | null;
+  sender: MessageProfile | MessageProfile[] | null;
 };
 
 export type ThreadMessage = {
@@ -40,10 +50,32 @@ export type FullMessageThread = {
   currentUserId: string;
 };
 
+function normalizeJoinedProfile(
+  raw: MessageProfile | MessageProfile[] | null | undefined
+): MessageProfile | null {
+  if (Array.isArray(raw)) {
+    return raw[0] ?? null;
+  }
+
+  return raw ?? null;
+}
+
 function normalizeParticipant(raw: RawThreadParticipant): ThreadParticipant {
   return {
     user_id: raw.user_id,
-    profile: Array.isArray(raw.profile) ? (raw.profile[0] ?? null) : null,
+    profile: normalizeJoinedProfile(raw.profile),
+  };
+}
+
+function normalizeMessage(raw: RawThreadMessage): ThreadMessage {
+  return {
+    id: raw.id,
+    thread_id: raw.thread_id,
+    sender_id: raw.sender_id,
+    body: raw.body,
+    created_at: raw.created_at,
+    read_at: raw.read_at,
+    sender: normalizeJoinedProfile(raw.sender),
   };
 }
 
@@ -86,10 +118,7 @@ export async function getMyMessageThreads(): Promise<MessageThreadListItem[]> {
 
   if (msgError) throw msgError;
 
-  const messages = (messagesRaw ?? []).map((msg) => ({
-    ...msg,
-    sender: Array.isArray(msg.sender) ? (msg.sender[0] ?? null) : null,
-  })) as ThreadMessage[];
+  const messages = ((messagesRaw ?? []) as RawThreadMessage[]).map(normalizeMessage);
 
   const latestByThread = new Map<number, ThreadMessage>();
   for (const msg of messages) {
@@ -199,10 +228,7 @@ export async function getMessageThread(
     normalizeParticipant
   );
 
-  const messages = ((messagesRaw ?? []) as any[]).map((msg) => ({
-    ...msg,
-    sender: Array.isArray(msg.sender) ? (msg.sender[0] ?? null) : null,
-  })) as ThreadMessage[];
+  const messages = ((messagesRaw ?? []) as RawThreadMessage[]).map(normalizeMessage);
 
   return {
     threadId,

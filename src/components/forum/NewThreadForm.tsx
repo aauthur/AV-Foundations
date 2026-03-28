@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import MathEditor from "./MathEditor";
 
 type Props = {
   categoryId: number;
@@ -10,6 +11,7 @@ type Props = {
 
 export default function NewThreadForm({ categoryId, categorySlug }: Props) {
   const router = useRouter();
+  const [body, setBody] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -35,22 +37,36 @@ export default function NewThreadForm({ categoryId, categorySlug }: Props) {
   }
 
   return (
-    <form action={handleSubmit} className="sectionCard stackLg">
+    <form action={handleSubmit} className="stackLg">
       <input type="hidden" name="category_id" value={categoryId} />
       <input type="hidden" name="category_slug" value={categorySlug} />
 
-      <div>
-        <label htmlFor="title" className="formLabel">
+      <div className="stackSm">
+        <label htmlFor="title" className="editorLabel">
           Title
         </label>
-        <input id="title" name="title" required className="field" />
+        <input
+          id="title"
+          name="title"
+          required
+          className="editorInput"
+          placeholder="Give your discussion a clear title"
+        />
       </div>
 
-      <div>
-        <label htmlFor="body" className="formLabel">
+      <div className="stackSm">
+        <label className="editorLabel" htmlFor="body">
           Body
         </label>
-        <textarea id="body" name="body" rows={10} required className="field" />
+        <MathEditor
+          name="body"
+          value={body}
+          onChange={setBody}
+          placeholderText="Write your thread here."
+          minHeight={220}
+          required
+          theme="paper"
+        />
       </div>
 
       {error ? <div className="errorText">{error}</div> : null}

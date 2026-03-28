@@ -22,7 +22,7 @@ export default async function ThreadPage({ params }: Props) {
   const { thread, comments } = threadData;
   const commentTree = buildCommentTree(comments);
   const visibleReplyCount = comments.filter((c) => !c.is_deleted).length;
-  
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -32,64 +32,54 @@ export default async function ThreadPage({ params }: Props) {
   const canManageThread = currentUserId === thread.author_id;
 
   return (
-    <main className="container" style={{ padding: "3rem 1rem 4rem", maxWidth: 980 }}>
-      <Link href={`/community/${thread.category.slug}`} className="linkMuted">
-        ← Back to {thread.category.name}
-      </Link>
+    <div className="threadPage">
+      <main className="container" style={{ padding: "3rem 1rem 4rem", maxWidth: 980 }}>
+        <Link href={`/community/${thread.category.slug}`} className="linkMuted">
+          ← Back to {thread.category.name}
+        </Link>
 
-      <article
-        className="paperBubbleStrong"
-        style={{ marginTop: "1rem", padding: "1.45rem 1.45rem 1.3rem" }}
-      >
-        <div className="toolbar" style={{ alignItems: "flex-start" }}>
-          <div>
-            <span
-              className="pill"
-              style={{
-                background: "rgba(184,121,85,0.10)",
-                borderColor: "rgba(184,121,85,0.22)",
-                color: "#6a5239",
-                marginBottom: "0.7rem",
-              }}
-            >
-              {thread.category.name}
+        <article className="threadMainPost" style={{ marginTop: "1.2rem" }}>
+          <span
+            className="pill"
+            style={{
+              background: "rgba(184,121,85,0.08)",
+              borderColor: "rgba(184,121,85,0.18)",
+              color: "#6a5239",
+              marginBottom: "0.85rem",
+            }}
+          >
+            {thread.category.name}
+          </span>
+
+          <h1 className="threadTitle">{thread.title}</h1>
+
+          <div className="threadMeta">
+            <span>
+              by{" "}
+              {thread.author?.username ? (
+                <Link href={`/u/${thread.author.username}`} className="linkMuted">
+                  {thread.author.display_name || thread.author.username}
+                </Link>
+              ) : (
+                "Unknown"
+              )}
             </span>
-
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "clamp(1.8rem, 3vw, 2.4rem)",
-                lineHeight: 1.08,
-                letterSpacing: "-0.03em",
-              }}
-            >
-              {thread.title}
-            </h1>
-
-            <div className="metaRow" style={{ marginTop: "0.85rem" }}>
-              <span>
-                by{" "}
-                {thread.author?.username ? (
-                  <Link href={`/u/${thread.author.username}`} className="linkMuted">
-                    {thread.author.display_name || thread.author.username}
-                  </Link>
-                ) : (
-                  "Unknown"
-                )}
-              </span>
-              <span>•</span>
-              <span>{visibleReplyCount} repl{visibleReplyCount === 1 ? "y" : "ies"}</span>
-            </div>
+            <span style={{ margin: "0 0.45rem" }}>•</span>
+            <span>
+              {visibleReplyCount} repl{visibleReplyCount === 1 ? "y" : "ies"}
+            </span>
           </div>
-        </div>
 
-        <div
-          style={{
-            marginTop: "1.2rem",
-            fontSize: "1.03rem",
-          }}
-        >
-          <RichText source={thread.body} />
+          <div
+            style={{
+              marginTop: "1rem",
+              fontSize: "1.03rem",
+              color: "#3b2c1b",
+            }}
+          >
+            <RichText source={thread.body} />
+          </div>
+
           {canManageThread ? (
             <ThreadActions
               threadId={thread.id}
@@ -98,35 +88,37 @@ export default async function ThreadPage({ params }: Props) {
               categorySlug={thread.category.slug}
             />
           ) : null}
-        </div>
-      </article>
+        </article>
 
-      {!thread.is_locked && (
-        <section className="sectionCard" style={{ marginTop: "1.8rem" }}>
-          <h2 style={{ marginTop: 0, marginBottom: "0.85rem" }}>Reply to thread</h2>
-          <ReplyForm threadId={thread.id} parentId={null} />
-        </section>
-      )}
+        <div className="threadDivider" />
 
-      <section style={{ marginTop: "2.3rem" }}>
-        <div className="toolbar" style={{ marginBottom: "1rem" }}>
-          <h2 style={{ margin: 0 }}>Replies</h2>
-          <span className="pill">{visibleReplyCount}</span>
-        </div>
-
-        {commentTree.length === 0 ? (
-          <div className="paperCard" style={{ padding: "1.2rem 1.25rem" }}>
-            <p style={{ margin: 0, color: "#6a5239" }}>No replies yet.</p>
-          </div>
-        ) : (
-          <CommentTree
-            nodes={commentTree}
-            threadId={thread.id}
-            threadLocked={thread.is_locked}
-            currentUserId={currentUserId}
-          />
+        {!thread.is_locked && (
+          <section style={{ marginTop: "1.2rem" }}>
+            <h2 style={{ marginTop: 0, marginBottom: "0.85rem", color: "#3b2c1b" }}>
+              Reply to thread
+            </h2>
+            <ReplyForm threadId={thread.id} parentId={null} />
+          </section>
         )}
-      </section>
-    </main>
+
+        <section style={{ marginTop: "2.2rem" }}>
+          <div className="threadRepliesHeader" style={{ marginBottom: "1rem" }}>
+            <h2 style={{ margin: 0 }}>Replies</h2>
+            <span className="pill">{visibleReplyCount}</span>
+          </div>
+
+          {commentTree.length === 0 ? (
+            <p style={{ margin: 0, color: "#6a5239" }}>No replies yet.</p>
+          ) : (
+            <CommentTree
+              nodes={commentTree}
+              threadId={thread.id}
+              threadLocked={thread.is_locked}
+              currentUserId={currentUserId}
+            />
+          )}
+        </section>
+      </main>
+    </div>
   );
 }
