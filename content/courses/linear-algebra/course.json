@@ -3,8 +3,6 @@
   "title": "Linear Algebra",
   "description": "Matrices, Elimination, Systems, etc.",
   "lessons": [
-    { "slug": "01-statements", "title": "Statements and Systems", "youtubeId": "G2ITFKi9QpU" , "type":"lesson"},
-    { "slug": "02-basics", "title": "Linearity, Matrices, Vectors, Matrix Multiplication", "youtubeId": "umAcIyiNqlE", "type":"lesson"},
-    { "slug": "03-quiz1", "title": "Quiz 1", "youtubeId": "", "type":"quiz"}
+    { "slug": "01-statements", "title": "Statements and Systems", "youtubeId": "G2ITFKi9QpU" , "type":"lesson"}
   ]
 }

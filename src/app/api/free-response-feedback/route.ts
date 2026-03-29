@@ -7,6 +7,29 @@ const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024; // 8 MB
+const ALLOWED_IMAGE_TYPES = new Set([
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+]);
+
+function getModerationReason(result: any): string {
+  if (!result?.categories) return "Content did not pass moderation.";
+
+  const flaggedCategories = Object.entries(result.categories)
+    .filter(([, value]) => value === true)
+    .map(([key]) => key);
+
+  if (flaggedCategories.length === 0) {
+    return "Content did not pass moderation.";
+  }
+
+  return `Content flagged for: ${flaggedCategories.join(", ")}.`;
+}
+
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();
@@ -33,8 +56,86 @@ export async function POST(req: Request) {
       );
     }
 
+    // Basic file validation before moderation
+    if (hasImage) {
+      if (!ALLOWED_IMAGE_TYPES.has(image.type)) {
+        return NextResponse.json(
+          { error: "Unsupported image type. Please upload PNG, JPEG, WEBP, or GIF." },
+          { status: 400 }
+        );
+      }
+
+      if (image.size > MAX_IMAGE_SIZE_BYTES) {
+        return NextResponse.json(
+          { error: "Image is too large. Please upload an image under 8 MB." },
+          { status: 400 }
+        );
+      }
+    }
+
+    // Moderate typed text first
+    if (typedResponse) {
+      const textModeration = await client.moderations.create({
+        model: "omni-moderation-latest",
+        input: [
+          {
+            type: "text",
+            text: typedResponse,
+          },
+        ],
+      });
+
+      const textResult = textModeration.results?.[0];
+      if (textResult?.flagged) {
+        return NextResponse.json(
+          {
+            error:
+              "Your typed response could not be submitted because it violates the content policy.",
+            details: getModerationReason(textResult),
+          },
+          { status: 400 }
+        );
+      }
+    }
+
+    let imageDataUrl: string | null = null;
+
+    // Moderate uploaded image before sending it to the model
+    if (hasImage) {
+      const bytes = await image.arrayBuffer();
+      const base64 = Buffer.from(bytes).toString("base64");
+      const mimeType = image.type || "image/png";
+
+      imageDataUrl = `data:${mimeType};base64,${base64}`;
+
+      const imageModeration = await client.moderations.create({
+        model: "omni-moderation-latest",
+        input: [
+          {
+            type: "image_url",
+            image_url: {
+              url: imageDataUrl,
+            },
+          },
+        ],
+      });
+
+      const imageResult = imageModeration.results?.[0];
+      if (imageResult?.flagged) {
+        return NextResponse.json(
+          {
+            error:
+              "Your uploaded image could not be submitted because it violates the content policy.",
+            details: getModerationReason(imageResult),
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     const responseContent: Array<
-      { type: "input_text"; text: string } | { type: "input_image"; image_url: string; detail: "auto" }
+      | { type: "input_text"; text: string }
+      | { type: "input_image"; image_url: string; detail: "auto" }
     > = [
       {
         type: "input_text",
@@ -49,7 +150,7 @@ Instructions:
 - Any mathematical notation MUST!! be wrapped in LaTeX math delimiters:
   - Use $...$ for inline math
   - Use $$...$$ for displayed equations
-- Never output raw LaTeX like \sum, \dots, \frac unless it is inside math delimiters
+- Never output raw LaTeX like \\sum, \\dots, \\frac unless it is inside math delimiters
 - If the student response is unclear, say so explicitly.
 - Focus on mathematical correctness, reasoning, and whether the student's overall method makes sense.
 - Judge the work by a reasonable undergraduate standard unless the problem itself clearly demands a higher level of rigor.
@@ -82,14 +183,10 @@ When deciding the verdict:
       });
     }
 
-    if (hasImage) {
-      const bytes = await image.arrayBuffer();
-      const base64 = Buffer.from(bytes).toString("base64");
-      const mimeType = image.type || "image/png";
-
+    if (imageDataUrl) {
       responseContent.push({
         type: "input_image",
-        image_url: `data:${mimeType};base64,${base64}`,
+        image_url: imageDataUrl,
         detail: "auto",
       });
     }

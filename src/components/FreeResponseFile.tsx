@@ -212,8 +212,8 @@ export default function FreeResponseFile({
         Free response
       </p>
 
-      <p style={{ marginTop: 0, lineHeight: 1.55, color: "#5a4630" }}>
-        {question}
+      <p style={{ lineHeight: 1.55 }}>
+        <MathText text={question} />
       </p>
 
       {inAssessmentMode && assessment?.hydrated && !submitted && !feedback ? (

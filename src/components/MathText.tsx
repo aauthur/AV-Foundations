@@ -11,8 +11,9 @@ type MathTextProps = {
 
 function normalizeLatexDelimiters(input: string): string {
   return input
-    .replace(/\\\[((?:.|\n|\r)*?)\\\]/g, (_match, inner) => `$$\n${inner.trim()}\n$$`)
-    .replace(/\\\(((?:.|\n|\r)*?)\\\)/g, (_match, inner) => `$${inner}$`);
+    .replace(/\r\n/g, "\n")
+    .replace(/\\\[((?:.|\n)*?)\\\]/g, (_match, inner) => `\n\n$$\n${inner.trim()}\n$$\n\n`)
+    .replace(/\\\(((?:.|\n)*?)\\\)/g, (_match, inner) => `$${inner.trim()}$`);
 }
 
 export default function MathText({ text }: MathTextProps) {

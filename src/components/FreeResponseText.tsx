@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import MathText from "@/components/MathText";
+import MathEditor from "@/components/forum/MathEditor";
 import { useAssessment } from "@/components/AssessmentShell";
 import { useLessonShell } from "@/components/LessonShell";
 
@@ -34,7 +35,7 @@ type FreeResponseProps = {
 export default function FreeResponseText({
   id,
   question = "",
-  placeholder = "Write your response here...",
+  placeholder = "Write your response (use \\ for LaTeX)...",
   rows = 8,
 }: FreeResponseProps) {
   const [answer, setAnswer] = useState("");
@@ -204,252 +205,102 @@ export default function FreeResponseText({
         color: "#3e2f1c",
       }}
     >
-      <p
+      <p style={{ fontWeight: 700 }}>Free response</p>
+
+      <p style={{ lineHeight: 1.55 }}>
+        <MathText text={question} />
+      </p>
+
+      <div
         style={{
-          marginTop: 0,
-          marginBottom: "0.6rem",
-          fontWeight: 700,
-          fontSize: "1.05rem",
-          color: "#3b2c1b",
+          opacity: submitted || loading ? 0.6 : 1,
+          pointerEvents: submitted || loading ? "none" : "auto",
         }}
       >
-        Free response
-      </p>
-
-      <p style={{ marginTop: 0, lineHeight: 1.55, color: "#5a4630" }}>
-        {question}
-      </p>
-
-      {inAssessmentMode && assessment?.hydrated && !submitted && !feedback ? (
-        <div
-          style={{
-            marginTop: "0.75rem",
-            padding: "0.85rem 0.95rem",
-            borderRadius: "14px",
-            background: "rgba(255, 244, 214, 0.75)",
-            border: "1px solid rgba(181, 137, 0, 0.25)",
-            color: "#6a5200",
-            lineHeight: 1.5,
-          }}
-        >
-          Type your response before submitting the quiz. This question will be
-          submitted automatically when you submit the assessment. If you do not
-          enter a response, you will not receive credit.
-        </div>
-      ) : null}
-
-      <div style={{ marginTop: "1rem" }}>
-        <textarea
+        <MathEditor
+          name={`fr-${id}`}
           value={answer}
-          placeholder={placeholder}
-          rows={rows}
-          disabled={submitted || loading}
-          onChange={(e) => {
-            setAnswer(e.target.value);
+          onChange={(val: string) => {
+            setAnswer(val);
             setFeedback(null);
             setError("");
           }}
-          style={{
-            width: "100%",
-            borderRadius: "12px",
-            border: "1px solid rgba(143, 114, 72, 0.55)",
-            background: "rgba(255, 252, 246, 0.95)",
-            padding: "0.75rem 0.85rem",
-            color: "#3b2c1b",
-            resize: "vertical",
-            boxSizing: "border-box",
-            font: "inherit",
-            lineHeight: 1.5,
-          }}
+          placeholderText={placeholder}
+          minHeight={rows * 24}
+          theme="paper"
         />
       </div>
 
-      {!inAssessmentMode ? (
-        <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-          <button
-            onClick={handleSubmit}
-            disabled={!answer.trim() || loading}
+      {answer.trim() && (
+        <div style={{ marginTop: "0.75rem" }}>
+          <strong>Preview:</strong>
+          <MathText text={answer} />
+        </div>
+      )}
+
+      {!inAssessmentMode && (
+        <button
+          onClick={handleSubmit}
+          disabled={!answer.trim() || loading}
+        >
+          {loading ? "Getting feedback..." : "Submit"}
+        </button>
+      )}
+
+      {error && <div>{error}</div>}
+
+      {feedback && verdictStyle && (
+          <div
             style={{
-              padding: "0.68rem 1rem",
-              borderRadius: "12px",
-              border: "1px solid #8f7248",
-              background:
-                !answer.trim() || loading
-                  ? "rgba(201, 185, 161, 0.55)"
-                  : "linear-gradient(180deg, #a68252, #8c6a40)",
-              color: !answer.trim() || loading ? "#6f6252" : "#fffaf2",
-              fontWeight: 700,
-              cursor: !answer.trim() || loading ? "not-allowed" : "pointer",
-              boxShadow:
-                !answer.trim() || loading
-                  ? "none"
-                  : "0 4px 12px rgba(88, 58, 24, 0.18)",
+              marginTop: "1rem",
+              padding: "0.9rem 1rem",
+              borderRadius: "14px",
+              border: verdictStyle.border,
+              background: verdictStyle.bg,
+              color: verdictStyle.text,
             }}
           >
-            {loading ? "Getting feedback..." : "Submit"}
-          </button>
-
-          {feedback ? (
-            <button
-              onClick={() => {
-                setAnswer("");
-                setFeedback(null);
-                setError("");
-
-                if (lessonShell) {
-                  lessonShell.saveQuestionState({
-                    questionId,
-                    questionType: "free_response_text",
-                    submitted: false,
-                    feedback: null,
-                  });
-                }
-              }}
+            <p
               style={{
-                padding: "0.68rem 1rem",
-                borderRadius: "12px",
-                border: "1px solid rgba(120, 94, 58, 0.28)",
-                background: "rgba(255, 250, 242, 0.8)",
-                color: "#5c4730",
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              Reset
-            </button>
-          ) : null}
-        </div>
-      ) : null}
-
-      {submitted && loading ? (
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "0.9rem 1rem",
-            borderRadius: "14px",
-            background: "rgba(235, 239, 245, 0.92)",
-            border: "1px solid rgba(100, 116, 139, 0.20)",
-            color: "#475569",
-          }}
-        >
-          Submitting free response...
-        </div>
-      ) : null}
-
-      {error && !feedback ? (
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "0.9rem 1rem",
-            borderRadius: "14px",
-            background: "rgba(250, 236, 232, 0.92)",
-            border: "1px solid rgba(162, 72, 72, 0.30)",
-            color: "#6a2a2a",
-          }}
-        >
-          {error}
-        </div>
-      ) : null}
-
-      {feedback ? (
-        <div
-          style={{
-            marginTop: "1rem",
-            padding: "1rem",
-            borderRadius: "14px",
-            background: "rgba(255, 252, 246, 0.88)",
-            border: "1px solid rgba(120, 94, 58, 0.18)",
-          }}
-        >
-          <p style={{ marginTop: 0, fontWeight: 700, color: "#3b2c1b" }}>
-            Feedback
-          </p>
-
-          {verdictStyle ? (
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.55rem",
-                padding: "0.6rem 0.85rem",
-                borderRadius: "999px",
-                background: verdictStyle.bg,
-                border: verdictStyle.border,
-                color: verdictStyle.text,
+                margin: 0,
                 fontWeight: 700,
-                marginBottom: "0.9rem",
+                marginBottom: "0.4rem",
               }}
             >
-              <span
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "1.2rem",
-                  height: "1.2rem",
-                  fontSize: "0.95rem",
-                  lineHeight: 1,
-                }}
-              >
-                {verdictStyle.icon}
-              </span>
-              <span>{verdictStyle.label}</span>
-            </div>
-          ) : null}
+              {verdictStyle.icon} {verdictStyle.label}
+            </p>
 
-          <div style={{ color: "#5a4630" }}>
-            <strong>Summary:</strong> <MathText text={feedback.summary} />
+            <div style={{ lineHeight: 1.55 }}>
+              <MathText text={feedback.summary} />
+            </div>
+
+            {feedback.verdict !== "correct" && feedback.strengths?.length > 0 && (
+              <ul style={{ marginTop: "0.5rem" }}>
+                {feedback.strengths.map((s, i) => (
+                  <li key={i}>
+                    <MathText text={s} />
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {feedback.verdict !== "correct" && feedback.issues?.length > 0 && (
+              <ul style={{ marginTop: "0.5rem" }}>
+                {feedback.issues.map((s, i) => (
+                  <li key={i}>
+                    <MathText text={s} />
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {feedback.verdict !== "correct" && feedback.next_hint && (
+              <div style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
+                <MathText text={feedback.next_hint} />
+              </div>
+            )}
           </div>
-
-          {feedback.strengths.length > 0 ? (
-            <>
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: "#3b2c1b",
-                  marginBottom: "0.35rem",
-                }}
-              >
-                Strengths
-              </p>
-              <ul style={{ marginTop: 0, color: "#5a4630" }}>
-                {feedback.strengths.map((item, i) => (
-                  <li key={i}>
-                    <MathText text={item} />
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-
-          {feedback.issues.length > 0 ? (
-            <>
-              <p
-                style={{
-                  fontWeight: 700,
-                  color: "#3b2c1b",
-                  marginBottom: "0.35rem",
-                }}
-              >
-                Issues
-              </p>
-              <ul style={{ marginTop: 0, color: "#5a4630" }}>
-                {feedback.issues.map((item, i) => (
-                  <li key={i}>
-                    <MathText text={item} />
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-
-          {feedback.next_hint ? (
-            <div style={{ color: "#5a4630" }}>
-              <strong>Next hint:</strong> <MathText text={feedback.next_hint} />
-            </div>
-          ) : null}
-        </div>
-      ) : null}
+        )}
     </div>
   );
 }

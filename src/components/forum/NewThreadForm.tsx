@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import MathEditor from "./MathEditor";
+import MathText from "@/components/MathText";
 
 type Props = {
   categoryId: number;
@@ -68,6 +69,21 @@ export default function NewThreadForm({ categoryId, categorySlug }: Props) {
           theme="paper"
         />
       </div>
+
+      {body.trim() ? (
+        <div className="stackSm">
+          <label className="editorLabel">Preview</label>
+          <div
+            style={{
+              padding: "1rem",
+              color: "#3b2c1b",
+              lineHeight: 1.6,
+            }}
+          >
+            <MathText text={body} />
+          </div>
+        </div>
+      ) : null}
 
       {error ? <div className="errorText">{error}</div> : null}
 

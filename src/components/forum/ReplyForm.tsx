@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import MathEditor from "./MathEditor";
+import MathText from "@/components/MathText";
 
 type Props = {
   threadId: number;
@@ -41,7 +42,11 @@ export default function ReplyForm({ threadId, parentId }: Props) {
       <input type="hidden" name="parent_id" value={parentId ?? ""} />
 
       <div className="stackSm">
-        <label className="editorLabel" htmlFor="body" style={{ marginTop: "0rem", display: "inline-block" }}>
+        <label
+          className="editorLabel"
+          htmlFor="body"
+          style={{ marginTop: "0rem", display: "inline-block" }}
+        >
           {parentId ? "Reply" : "Reply to thread"}
         </label>
 
@@ -55,6 +60,22 @@ export default function ReplyForm({ threadId, parentId }: Props) {
           theme="paper"
         />
       </div>
+
+      {body.trim() ? (
+        <div className="stackSm">
+          <label className="editorLabel">Preview</label>
+          <div
+            className="editorCard"
+            style={{
+              padding: "1rem",
+              color: "#3b2c1b",
+              lineHeight: 1.6,
+            }}
+          >
+            <MathText text={body} />
+          </div>
+        </div>
+      ) : null}
 
       {error ? <div className="errorText">{error}</div> : null}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import MathText from "@/components/MathText";
 import { useAssessment } from "@/components/AssessmentShell";
 import { useLessonShell } from "@/components/LessonShell";
 
@@ -168,7 +169,7 @@ export default function MultipleAnswer({
           color: "#3b2c1b",
         }}
       >
-        {question}
+        <MathText text={question} />
       </p>
 
       <div style={{ display: "grid", gap: "0.8rem" }}>
@@ -236,7 +237,9 @@ export default function MultipleAnswer({
                 }}
               />
 
-              <span style={{ flex: 1, lineHeight: 1.45 }}>{option}</span>
+              <span style={{ flex: 1, lineHeight: 1.45 }}>
+                <MathText text={option} />
+              </span>
 
               {isRightSelected ? (
                 <span

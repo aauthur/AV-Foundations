@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import MathEditor from "@/components/forum/MathEditor";
+import MathText from "@/components/MathText";
 
 type Props = {
   threadId: number;
@@ -46,7 +47,23 @@ export default function MessageComposer({ threadId }: Props) {
         minHeight={140}
         placeholderText="Write a message..."
         required
+        theme="paper"
       />
+
+      {body.trim() ? (
+        <div className="stackSm">
+          <label className="editorLabel">Preview</label>
+          <div
+            style={{
+              padding: "1rem",
+              color: "#3b2c1b",
+              lineHeight: 1.6,
+            }}
+          >
+            <MathText text={body} />
+          </div>
+        </div>
+      ) : null}
 
       {error ? <div className="errorText">{error}</div> : null}
 

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAssessment } from "@/components/AssessmentShell";
 import { useLessonShell } from "@/components/LessonShell";
+import MathText from "@/components/MathText";
 
 type MultipleChoiceProps = {
   id: string;
@@ -12,13 +13,16 @@ type MultipleChoiceProps = {
   explanation?: string;
 };
 
+
+
 export default function MultipleChoice({
   id,
   question = "",
   options = "",
-  correctIndex = 0,
+  correctIndex,
   explanation,
 }: MultipleChoiceProps) {
+
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [localSubmitted, setLocalSubmitted] = useState(false);
 
@@ -41,13 +45,15 @@ export default function MultipleChoice({
       .filter(Boolean);
   }, [options]);
 
+  const ci = Number(correctIndex);
+  
   const hasValidCorrectIndex =
-    correctIndex >= 0 && correctIndex < parsedOptions.length;
+    ci >= 0 && ci < parsedOptions.length;
 
   const answerIsCorrect =
     selectedIndex !== null &&
     hasValidCorrectIndex &&
-    selectedIndex === correctIndex;
+    selectedIndex === ci;
 
   const isCorrect = submitted && answerIsCorrect;
 
@@ -140,7 +146,7 @@ export default function MultipleChoice({
           color: "#3b2c1b",
         }}
       >
-        {question}
+        <MathText text={question} />
       </p>
 
       <div style={{ display: "grid", gap: "0.8rem" }}>
@@ -150,14 +156,14 @@ export default function MultipleChoice({
             submitted &&
             selectedIndex !== null &&
             selectedIndex === index &&
-            (!hasValidCorrectIndex || index !== correctIndex);
+            (!hasValidCorrectIndex || index !== ci);
 
           const isRightSelected =
             submitted &&
             selectedIndex !== null &&
             hasValidCorrectIndex &&
             selectedIndex === index &&
-            index === correctIndex;
+            index === ci;
 
           let border = "1px solid rgba(120, 94, 58, 0.20)";
           let background = "rgba(255, 252, 246, 0.9)";
@@ -213,7 +219,9 @@ export default function MultipleChoice({
                 }}
               />
 
-              <span style={{ flex: 1, lineHeight: 1.45 }}>{option}</span>
+              <span style={{ flex: 1, lineHeight: 1.45 }}>
+                <MathText text={option} />
+              </span>
 
               {isRightSelected ? (
                 <span
@@ -340,16 +348,15 @@ export default function MultipleChoice({
           </p>
 
           {explanation && isCorrect ? (
-            <p
+            <div
               style={{
-                margin: 0,
                 lineHeight: 1.55,
                 opacity: 0.92,
                 color: "#5a4630",
               }}
             >
-              {explanation}
-            </p>
+              <MathText text={explanation} />
+            </div>
           ) : null}
         </div>
       )}
